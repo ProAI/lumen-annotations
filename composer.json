@@ -1,0 +1,27 @@
+{
+    "name": "proai/lumen-route-annotations",
+    "description": "Route Annotations for Laravel Lumen.",
+    "keywords": ["laravel","lumen","route","routes","router","annotations"],
+    "homepage": "http://github.com/proai/lumen-route-annotations",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Markus J. Wetzel",
+            "email": "markuswetzel@gmx.net"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "laravel/lumen-framework": "5.1.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "ProAI\\RouteAnnotations\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}
