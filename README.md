@@ -30,14 +30,14 @@ Annotation | Description
 `@Resource` | First parameter is resource name. Optional parameters `only` and `except`.
 `@Middleware` | First parameter is middleware name. Optional parameters `only` and `except`.
 
-### Method/Property Annotations
+### Method Annotations
 
 Annotation | Description
 --- | ---
-@Get, @Post, @Options, @Put, @Patch, @Delete, @Any | First parameter is route url. Optional parameters `as`, `where`, `middleware`.
-@Middleware | First parameter is middleware name.
+`@Get`,<br>`@Post`,<br>`@Options`,<br>`@Put`,<br>`@Patch`,<br>`@Delete`,<br>`@Any` | First parameter is route url. Optional parameters `as`, `where`, `middleware`.
+`@Middleware` | First parameter is middleware name.
 
-**See examples for usage of annotations.**
+_See examples for usage of annotations._
 
 ### Commands
 
