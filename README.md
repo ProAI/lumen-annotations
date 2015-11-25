@@ -2,6 +2,8 @@
 
 [![Latest Stable Version](https://poser.pugx.org/proai/lumen-route-annotations/v/stable)](https://packagist.org/packages/proai/lumen-route-annotations) [![Total Downloads](https://poser.pugx.org/proai/lumen-route-annotations/downloads)](https://packagist.org/packages/proai/lumen-route-annotations) [![Latest Unstable Version](https://poser.pugx.org/proai/lumen-route-annotations/v/unstable)](https://packagist.org/packages/proai/lumen-route-annotations) [![License](https://poser.pugx.org/proai/lumen-route-annotations/license)](https://packagist.org/packages/proai/lumen-route-annotations)
 
+This package enables annotations in Laravel Lumen to define routes.
+
 ## Installation
 
 Lumen Route Annotationsis distributed as a composer package. So you first have to add the package to your `composer.json` file:
@@ -20,7 +22,7 @@ Run `php artisan vendor:publish` to publish this package configuration. Afterwar
 
 ## Usage
 
-By using annotations you can define your routes directly in your controller classes:
+By using annotations you can define your routes directly in your controller classes (see examples for usage of annotations).
 
 ### Class Annotations
 
@@ -36,8 +38,6 @@ Annotation | Description
 --- | ---
 `@Get`,<br>`@Post`,<br>`@Options`,<br>`@Put`,<br>`@Patch`,<br>`@Delete`,<br>`@Any` | First parameter is route url. Optional parameters `as`, `where`, `middleware`.
 `@Middleware` | First parameter is middleware name.
-
-_See examples for usage of annotations._
 
 ### Commands
 
