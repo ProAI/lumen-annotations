@@ -12,7 +12,8 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "laravel/lumen-framework": "5.1.*"
+        "laravel/lumen-framework": "5.1.*",
+        "doctrine/annotations": "~1.2"
     },
     "autoload": {
         "psr-4": {
