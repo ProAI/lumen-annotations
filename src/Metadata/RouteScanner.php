@@ -212,39 +212,47 @@ class RouteScanner
             // check for http method annotation
             if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Get) {
                 $httpMethod = 'GET';
+                break;
             }
             if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Post) {
                 $httpMethod = 'POST';
+                break;
             }
             if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Options) {
                 $httpMethod = 'OPTIONS';
+                break;
             }
             if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Put) {
                 $httpMethod = 'PUT';
+                break;
             }
             if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Patch) {
                 $httpMethod = 'PATCH';
+                break;
             }
             if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Delete) {
                 $httpMethod = 'DELETE';
+                break;
             }
             if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Any) {
                 $httpMethod = 'ANY';
+                break;
             }
 
-            // http method found
-            if ($httpMethod) {
-                // options
-                $as = (! empty($annotation->as)) ? $annotation->as : '';
-                $middleware = (! empty($annotation->middleware)) ? $annotation->middleware : '';
+        }
 
-                return [
-                    'url' => $annotation->value,
-                    'httpMethod' => $httpMethod,
-                    'as' => $as,
-                    'middleware' => $middleware
-                ];
-            }
+        // http method found
+        if (! empty($httpMethod)) {
+            // options
+            $as = (! empty($annotation->as)) ? $annotation->as : '';
+            $middleware = (! empty($annotation->middleware)) ? $annotation->middleware : '';
+
+            return [
+                'url' => $annotation->value,
+                'httpMethod' => $httpMethod,
+                'as' => $as,
+                'middleware' => $middleware
+            ];
         }
 
         return null;
