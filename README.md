@@ -28,7 +28,7 @@ By using annotations you can define your routes directly in your controller clas
 
 Annotation | Description
 --- | ---
-`@Controller` | Optional parameters `prefix` and `domain`.
+`@Controller` | Optional parameters `prefix` and `middleware`.
 `@Resource` | First parameter is resource name. Optional parameters `only` and `except`.
 `@Middleware` | First parameter is middleware name.
 
@@ -36,7 +36,7 @@ Annotation | Description
 
 Annotation | Description
 --- | ---
-`@Get`,<br>`@Post`,<br>`@Options`,<br>`@Put`,<br>`@Patch`,<br>`@Delete`,<br>`@Any` | First parameter is route url. Optional parameters `as`, `where`, `middleware`.
+`@Get`,<br>`@Post`,<br>`@Options`,<br>`@Put`,<br>`@Patch`,<br>`@Delete`,<br>`@Any` | First parameter is route url. Optional parameters `as` and `middleware`.
 `@Middleware` | First parameter is middleware name.
 
 ### Commands
