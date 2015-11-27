@@ -30,7 +30,7 @@ Annotation | Description
 --- | ---
 `@Controller` | Optional parameters `prefix` and `domain`.
 `@Resource` | First parameter is resource name. Optional parameters `only` and `except`.
-`@Middleware` | First parameter is middleware name. Optional parameters `only` and `except`.
+`@Middleware` | First parameter is middleware name.
 
 ### Method Annotations
 
