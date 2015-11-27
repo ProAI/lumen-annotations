@@ -92,7 +92,6 @@ class CommandsServiceProvider extends ServiceProvider
     protected function registerRegisterCommand()
     {
         $this->app->singleton('command.route.register', function ($app) {
-            dd($app['config']['route']);
             return new RegisterCommand(
                 $app['route.annotations.classfinder'],
                 $app['route.annotations.scanner'],
