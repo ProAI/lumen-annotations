@@ -1,24 +1,44 @@
 <?php
 
-namespace ProAI\Datamapper\Presenter\Console;
+namespace ProAI\RouteAnnotations\Console;
 
-use ProAI\Datamapper\Presenter\Console\PresenterCommand;
+use ProAI\RouteAnnotations\Routing\Generator;
 
-class PresenterClearCommand extends PresenterCommand
+class ClearCommand
 {
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'presenter:clear';
+    protected $name = 'route:clear';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Clear all registered presenters.';
+    protected $description = 'Clear all registered routes.';
+
+    /**
+     * The routes generator instance.
+     *
+     * @var \ProAI\RouteAnnotations\Routing\Generator
+     */
+    protected $generator;
+
+    /**
+     * Create a new migration install command instance.
+     *
+     * @param \ProAI\RouteAnnotations\Routing\Generator $generator
+     * @return void
+     */
+    public function __construct(Generator $generator)
+    {
+        parent::__construct();
+
+        $this->generator = $generator;
+    }
 
     /**
      * Execute the console command.
@@ -27,9 +47,9 @@ class PresenterClearCommand extends PresenterCommand
      */
     public function fire()
     {
-        // delete presenters.json file
-        $this->repository->delete();
+        // delete routes.php file
+        $this->generator->clean();
 
-        $this->info('Presenters cleared successfully!');
+        $this->info('Routes cleared successfully!');
     }
 }

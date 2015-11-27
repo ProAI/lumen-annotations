@@ -30,7 +30,7 @@ class RouteAnnotationsServiceProvider extends ServiceProvider
     {
         $this->registerConfig();
 
-        $this->app->register('ProAI\Datamapper\Presenter\Providers\CommandsServiceProvider');
+        $this->app->register('ProAI\RouteAnnotations\Providers\CommandsServiceProvider');
     }
 
     /**

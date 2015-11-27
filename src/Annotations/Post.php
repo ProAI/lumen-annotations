@@ -22,14 +22,4 @@ final class Post implements Annotation
      * @var mixed
      */
     public $middleware;
-
-    /**
-     * @var array
-     */
-    public $where;
-
-    /**
-     * @var string
-     */
-    public $domain;
 }

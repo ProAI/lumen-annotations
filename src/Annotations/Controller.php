@@ -14,7 +14,7 @@ final class Controller implements Annotation
     public $prefix;
 
     /**
-     * @var string
+     * @var mixed
      */
-    public $domain;
+    public $middleware;
 }

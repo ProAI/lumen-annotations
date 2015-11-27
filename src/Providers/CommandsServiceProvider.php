@@ -57,7 +57,7 @@ class CommandsServiceProvider extends ServiceProvider
         $app = $this->app;
 
         $app->singleton('route.annotations.generator', function ($app) {
-            $path = $app['path.storage'] . '/framework/entities';
+            $path = $app['path.storage'] . '/framework';
 
             return new Generator($app['files'], $path);
         });
@@ -85,14 +85,14 @@ class CommandsServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the "presenter:register" command.
+     * Register the "route:register" command.
      *
      * @return void
      */
     protected function registerRegisterCommand()
     {
         $this->app->singleton('command.route.register', function ($app) {
-            return new PresenterRegisterCommand(
+            return new RegisterCommand(
                 $app['route.annotations.classfinder'],
                 $app['route.annotations.scanner'],
                 $app['route.annotations.generator'],
@@ -102,14 +102,14 @@ class CommandsServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the "presenter:clear" command.
+     * Register the "route:clear" command.
      *
      * @return void
      */
     protected function registerClearCommand()
     {
         $this->app->singleton('command.route.clear', function ($app) {
-            return new PresenterClearCommand(
+            return new ClearCommand(
                 $app['route.annotations.classfinder'],
                 $app['route.annotations.scanner'],
                 $app['route.annotations.generator'],

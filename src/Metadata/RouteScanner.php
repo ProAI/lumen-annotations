@@ -1,11 +1,11 @@
 <?php
 
-namespace ProAI\RouteAnnotations\Presenter\Metadata;
+namespace ProAI\RouteAnnotations\Metadata;
 
 use ReflectionClass;
 use Doctrine\Common\Annotations\AnnotationReader;
 
-class PresenterScanner
+class RouteScanner
 {
     /**
      * The annotation reader instance.
@@ -36,10 +36,10 @@ class PresenterScanner
         $metadata = [];
 
         foreach ($classes as $class) {
-            $presenter = $this->parseClass($class);
+            $controllerMetadata = $this->parseClass($class);
 
-            if ($presenter) {
-                $metadata[$class] = $presenter;
+            if ($controller) {
+                $metadata[$class] = $controllerMetadata;
             }
         }
 
@@ -49,16 +49,16 @@ class PresenterScanner
     /**
      * Parse a class.
      *
-     * @param array $annotations
-     * @return string|null
+     * @param string $class
+     * @return array|null
      */
     public function parseClass($class)
     {
         $reflectionClass = new ReflectionClass($class);
 
         // check if class is entity
-        if ($annotation = $this->reader->getClassAnnotation($reflectionClass, '\ProAI\RouteAnnotations\Presenter\Annotations\Presenter')) {
-            return $this->parsePresenter($class, $annotation);
+        if ($annotation = $this->reader->getClassAnnotation($reflectionClass, '\ProAI\RouteAnnotations\Annotations\Controller')) {
+            return $this->parseController($class);
         } else {
             return null;
         }
@@ -67,12 +67,107 @@ class PresenterScanner
     /**
      * Parse a controller class.
      *
-     * @param array $class
-     * @param \ProAI\RouteAnnotations\Annotations\Presenter $annotation
+     * @param string $class
      * @return string
      */
-    public function parsePresenter($class, $annotation)
+    public function parseController($class)
     {
-        return get_real_entity($annotation->class);
+        $reflectionClass = new ReflectionClass($class);
+        $classAnnotations = $this->reader->getClassAnnotations($reflectionClass);
+
+        $controllerMetadata = [];
+
+        // find entity parameters and plugins
+        foreach ($classAnnotations as $annotation) {
+            // controller attributes
+            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Controller) {
+                $prefix = $annotation->prefix;
+                $middleware = $annotation->middleware;
+            }
+            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Middleware) {
+                $middleware = $annotation->value;
+            }
+        }
+        
+        // find routes
+        foreach ($reflectionClass->getMethods() as $reflectionMethod) {
+            $name = $reflectionMethod->getName();
+            $methodAnnotations = $this->reader->getMethodAnnotations($reflectionMethod);
+
+            $route = false;
+
+            foreach ($methodAnnotations as $annotation) {
+                if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Get) {
+                    $route = true;
+                    $httpMethod= 'GET';
+                }
+                if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Post) {
+                    $route = true;
+                    $httpMethod= 'POST';
+                }
+                if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Options) {
+                    $route = true;
+                    $httpMethod= 'OPTIONS';
+                }
+                if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Put) {
+                    $route = true;
+                    $httpMethod= 'PUT';
+                }
+                if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Patch) {
+                    $route = true;
+                    $httpMethod= 'PATCH';
+                }
+                if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Delete) {
+                    $route = true;
+                    $httpMethod= 'DELETE';
+                }
+                if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Any) {
+                    $route = true;
+                    $httpMethod= 'ANY';
+                }
+
+                if ($route) {
+                    $routeAnnotation = $annotation;
+                }
+            }
+
+            if ($route) {
+
+                // init new route metadata
+                $routeMetadata = [
+                    'url' => $annotation->value,
+                    'controller' => $class,
+                    'controllerMethod' => $name,
+                    'httpMethod' => $method,
+                ];
+
+                // add as and middleware
+                if ($annotation->as) {
+                    $routeMetadata['as'] = $annotation->as;
+                }
+                if ($annotation->middleware) {
+                    $routeMetadata['middleware'] = $annotation->middleware;
+                }
+
+                // add other method annotations
+                foreach ($methodAnnotations as $annotation) {
+                    if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Middleware) {
+                        $routeMetadata['middleware'] = $annotation->value;
+                    }
+                }
+
+                // add global prefix and middleware
+                if (isset($prefix)) {
+                    $routeMetadata['prefix'] = $prefix;
+                }
+                if (isset($middleware) && ! in_array()) {
+                    $routeMetadata['middleware'] = $middleware;
+                }
+
+                $controllerMetadata[$name] = $routeMetadata;
+            }
+        }
+
+        return $controllerMetadata;
     }
 }
