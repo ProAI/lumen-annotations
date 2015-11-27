@@ -52,7 +52,9 @@ After you have defined the routes via annotations, you have to run `php artisan 
 * Use `php artisan route:register` to register all routes.
 * Use `php artisan route:clear` to clear the registered routes.
 
-### Example #1
+### Examples
+
+##### Example #1
 
 ```php
 <?php
@@ -82,7 +84,7 @@ class UserController
 }
 ```
 
-### Example #2
+##### Example #2
 
 ```php
 <?php
