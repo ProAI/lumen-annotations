@@ -18,7 +18,7 @@ Then you have to run `composer update` to install the package. Once this is comp
 'ProAI\RouteAnnotations\RouteAnnotationsServiceProvider'
 ```
 
-Run `php artisan vendor:publish` to publish this package configuration. Afterwards you can edit the file `config/route-annotations.php`.
+Copy `config/route.php` from this package to your configuration directory to use a custom configuration file.
 
 ## Usage
 
@@ -65,7 +65,7 @@ class UserController
     /**
      * Method annotations for showProfile() method.
      *
-     * @Route\Get("/profiles/{id}", as="profiles.show", where={"id": "[0-9]+"})
+     * @Route\Get("/profiles/{id}", as="profiles.show")
      * @Route\Middleware("auth")
      */
     public function showProfile()
@@ -89,7 +89,7 @@ use ProAI\RouteAnnotations\Annotations as Route;
  * Class annotations for resource controller CommentController (belongs to all class methods).
  *
  * @Route\Resource("comments", only={"create", "index", "show"})
- * @Route\Middleware("auth", except={"index", "show"})
+ * @Route\Middleware("auth")
  */
 class CommentController
 {
