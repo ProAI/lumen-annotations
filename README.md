@@ -20,11 +20,17 @@ Then you have to run `composer update` to install the package. Once this is comp
 
 Copy `config/route.php` from this package to your configuration directory to use a custom configuration file.
 
+Once you have run `php artisan route:register` (see below), you have to include the generated `routes.php` file in your `bootstrap/app.php` file:
+
+```php
+require __DIR__.'/../storage/framework/routes.php';
+```
+
 ## Usage
 
 By using annotations you can define your routes directly in your controller classes (see examples for usage of annotations).
 
-### Class Annotations
+##### Class Annotations
 
 Annotation | Description
 --- | ---
@@ -32,7 +38,7 @@ Annotation | Description
 `@Resource` | First parameter is resource name. Optional parameters `only` and `except`.
 `@Middleware` | First parameter is middleware name.
 
-### Method Annotations
+##### Method Annotations
 
 Annotation | Description
 --- | ---
