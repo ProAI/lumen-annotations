@@ -6,20 +6,7 @@ namespace ProAI\RouteAnnotations\Annotations;
  * @Annotation
  * @Target("METHOD")
  */
-final class Any implements Annotation
+final class Any extends HttpMethod implements Annotation
 {
-    /**
-     * @var string
-     */
-    public $value;
-
-    /**
-     * @var string
-     */
-    public $as;
-
-    /**
-     * @var mixed
-     */
-    public $middleware;
+    //
 }

@@ -2,9 +2,10 @@
 
 namespace ProAI\RouteAnnotations\Console;
 
+use Illuminate\Console\Command;
 use ProAI\RouteAnnotations\Routing\Generator;
 
-class ClearCommand
+class ClearCommand extends Command
 {
     /**
      * The console command name.

@@ -57,9 +57,9 @@ class CommandsServiceProvider extends ServiceProvider
         $app = $this->app;
 
         $app->singleton('route.annotations.generator', function ($app) {
-            $path = $app['path.storage'] . '/framework';
+            $path = storage_path('/framework');
 
-            return new Generator($app['files'], $path);
+            return new Generator($app['files'], $path, 'routes.php');
         });
     }
 
@@ -92,11 +92,12 @@ class CommandsServiceProvider extends ServiceProvider
     protected function registerRegisterCommand()
     {
         $this->app->singleton('command.route.register', function ($app) {
+            dd($app['config']['route']);
             return new RegisterCommand(
                 $app['route.annotations.classfinder'],
                 $app['route.annotations.scanner'],
                 $app['route.annotations.generator'],
-                $app['config']['route.annotations']
+                $app['config']['route']
             );
         });
     }
@@ -110,10 +111,7 @@ class CommandsServiceProvider extends ServiceProvider
     {
         $this->app->singleton('command.route.clear', function ($app) {
             return new ClearCommand(
-                $app['route.annotations.classfinder'],
-                $app['route.annotations.scanner'],
-                $app['route.annotations.generator'],
-                $app['config']['route.annotations']
+                $app['route.annotations.generator']
             );
         });
     }

@@ -38,7 +38,7 @@ class RouteScanner
         foreach ($classes as $class) {
             $controllerMetadata = $this->parseClass($class);
 
-            if ($controller) {
+            if ($controllerMetadata) {
                 $metadata[$class] = $controllerMetadata;
             }
         }
@@ -87,68 +87,55 @@ class RouteScanner
             if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Middleware) {
                 $middleware = $annotation->value;
             }
+
+            // resource controller
+            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Resource) {
+                $resourceMethods = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
+                if (! empty($annotation->only)) {
+                    $resourceMethods = array_intersect($resourceMethods, $annotation->only);
+                }
+                elseif (! empty($annotation->except)) {
+                    $resourceMethods = array_diff($resourceMethods, $annotation->except);
+                }
+                $resource = [
+                    'name' => $annotation->value,
+                    'methods' => $resourceMethods
+                ];
+            }
         }
         
         // find routes
         foreach ($reflectionClass->getMethods() as $reflectionMethod) {
             $name = $reflectionMethod->getName();
             $methodAnnotations = $this->reader->getMethodAnnotations($reflectionMethod);
+            $routeMetadata = [];
 
-            $route = false;
-
-            foreach ($methodAnnotations as $annotation) {
-                if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Get) {
-                    $route = true;
-                    $httpMethod= 'GET';
-                }
-                if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Post) {
-                    $route = true;
-                    $httpMethod= 'POST';
-                }
-                if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Options) {
-                    $route = true;
-                    $httpMethod= 'OPTIONS';
-                }
-                if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Put) {
-                    $route = true;
-                    $httpMethod= 'PUT';
-                }
-                if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Patch) {
-                    $route = true;
-                    $httpMethod= 'PATCH';
-                }
-                if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Delete) {
-                    $route = true;
-                    $httpMethod= 'DELETE';
-                }
-                if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Any) {
-                    $route = true;
-                    $httpMethod= 'ANY';
-                }
-
-                if ($route) {
-                    $routeAnnotation = $annotation;
-                }
-            }
-
-            if ($route) {
-
-                // init new route metadata
+            // controller method is resource route
+            if (! empty($resource) && in_array($name, $resource['methods'])) {
                 $routeMetadata = [
-                    'url' => $annotation->value,
+                    'url' => $resource['name'].$this->getResourcePath($name),
                     'controller' => $class,
                     'controllerMethod' => $name,
-                    'httpMethod' => $method,
+                    'httpMethod' => $this->getResourceHttpMethod($name),
+                    'as' => $resource['name'].'.'.$name,
+                    'middleware' => ''
                 ];
+            }
 
-                // add as and middleware
-                if ($annotation->as) {
-                    $routeMetadata['as'] = $annotation->as;
-                }
-                if ($annotation->middleware) {
-                    $routeMetadata['middleware'] = $annotation->middleware;
-                }
+            // controller method is route
+            if ($route = $this->hasHttpMethodAnnotation($methodAnnotations)) {
+                $routeMetadata = [
+                    'url' => $route['url'],
+                    'controller' => $class,
+                    'controllerMethod' => $name,
+                    'httpMethod' => $route['httpMethod'],
+                    'as' => $route['as'],
+                    'middleware' => $route['middleware']
+                ];
+            }
 
+            // add more route options to route metadata
+            if (! empty($routeMetadata)) {
                 // add other method annotations
                 foreach ($methodAnnotations as $annotation) {
                     if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Middleware) {
@@ -157,10 +144,10 @@ class RouteScanner
                 }
 
                 // add global prefix and middleware
-                if (isset($prefix)) {
-                    $routeMetadata['prefix'] = $prefix;
+                if (! empty($prefix)) {
+                    $routeMetadata['url'] = $prefix.'/'.$routeMetadata['url'];
                 }
-                if (isset($middleware) && ! in_array()) {
+                if (! empty($middleware) && empty($routeMetadata['middleware'])) {
                     $routeMetadata['middleware'] = $middleware;
                 }
 
@@ -169,5 +156,97 @@ class RouteScanner
         }
 
         return $controllerMetadata;
+    }
+
+    /**
+     * Get resource http method.
+     *
+     * @param string $method
+     * @return string
+     */
+    protected function getResourceHttpMethod($method)
+    {
+        $resourceHttpMethods = [
+            'index' => 'GET',
+            'create' => 'GET',
+            'store' => 'POST',
+            'show' => 'GET',
+            'edit' => 'GET',
+            'update' => 'PUT',
+            'destroy' => 'DELETE'
+        ];
+
+        return (isset($resourceHttpMethods[$method])) ? $resourceHttpMethods[$method] : null;
+    }
+
+    /**
+     * Get resource path.
+     *
+     * @param string $method
+     * @return string
+     */
+    protected function getResourcePath($method)
+    {
+        $resourcePaths = [
+            'index' => '',
+            'create' => 'create',
+            'store' => '',
+            'show' => '/{id}',
+            'edit' => '/{id}/edit',
+            'update' => '/{id}',
+            'destroy' => '/{id}'
+        ];
+
+        return (isset($resourcePaths[$method])) ? $resourcePaths[$method] : null;
+    }
+
+    /**
+     * Check for http method.
+     *
+     * @param array $methodAnnotations
+     * @return string
+     */
+    protected function hasHttpMethodAnnotation($methodAnnotations)
+    {
+        foreach ($methodAnnotations as $annotation) {
+            // check for http method annotation
+            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Get) {
+                $httpMethod = 'GET';
+            }
+            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Post) {
+                $httpMethod = 'POST';
+            }
+            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Options) {
+                $httpMethod = 'OPTIONS';
+            }
+            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Put) {
+                $httpMethod = 'PUT';
+            }
+            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Patch) {
+                $httpMethod = 'PATCH';
+            }
+            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Delete) {
+                $httpMethod = 'DELETE';
+            }
+            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Any) {
+                $httpMethod = 'ANY';
+            }
+
+            // http method found
+            if ($httpMethod) {
+                // options
+                $as = (! empty($annotation->as)) ? $annotation->as : '';
+                $middleware = (! empty($annotation->middleware)) ? $annotation->middleware : '';
+
+                return [
+                    'url' => $annotation->value,
+                    'httpMethod' => $httpMethod,
+                    'as' => $as,
+                    'middleware' => $middleware
+                ];
+            }
+        }
+
+        return null;
     }
 }

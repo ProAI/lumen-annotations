@@ -40,7 +40,7 @@ class ClassFinder
 
         $path = $this->stripNamespace($base_namespace, $this->getAppNamespace());
 
-        $directory = app_path() . '\\' . $path;
+        $directory = app('path') . '\\' . $path;
 
         return $this->finder->findClasses($directory);
     }

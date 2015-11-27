@@ -32,13 +32,14 @@ class Generator
      *
      * @param \Illuminate\Filesystem\Filesystem $files
      * @param string $path
+     * @param string $file
      * @return void
      */
-    public function __construct(Filesystem $files, $path)
+    public function __construct(Filesystem $files, $path, $routesFile)
     {
         $this->files = $files;
         $this->path = $path;
-        $this->routesFile = $this->path . '/routes.php';
+        $this->routesFile = $this->path . '/' . $routesFile;
     }
 
     /**
@@ -82,38 +83,38 @@ class Generator
      */
     public function generateRoutes($metadata)
     {
-        $contents = '<?php' . PHP_EOL . PHP_EOL;
+        $contents = '<?php' . PHP_EOL;
 
         $routes = [];
 
-        foreach($metadata as $controllerMetadata) {
+        foreach($metadata as $name => $controllerMetadata) {
+            $contents .= PHP_EOL . "// Routes in controller '" . $name . "'" . PHP_EOL;
+
             foreach($controllerMetadata as $routeMetadata) {
                 $options = [];
 
                 // as option
-                if (isset($routeMetadata['as'])) {
-                    $options = "'as' => '".$routeMetadata['as']."'";
+                if (! empty($routeMetadata['as'])) {
+                    $options[] = "'as' => '".$routeMetadata['as']."'";
                 }
 
                 // middleware option
-                if (isset($routeMetadata['middleware'])) {
-                    $options = "'middleware' => '".$routeMetadata['middleware']."'";
+                if (! empty($routeMetadata['middleware'])) {
+                    if (is_array($routeMetadata['middleware'])) {
+                        $middleware = "['".implode("', '",$routeMetadata['middleware'])."']";
+                    } else {
+                        $middleware = "'".$routeMetadata['middleware']."'";
+                    }
+                    $options[] = "'middleware' => ".$middleware;
                 }
 
                 // uses option
-                $options = "'uses' => '".$routeMetadata['controller']."@".$routeMetadata['controllerMethod']."'";
+                $options[] = "'uses' => '".$routeMetadata['controller']."@".$routeMetadata['controllerMethod']."'";
 
-                // url
-                $url = $routeMetadata['url'];
-                if (isset($routeMetadata['prefix'])) {
-                    $url = $routeMetadata['prefix']."/".$routeMetadata['url'];
-                }
-
-                $routes[] = "$app->".strtolower($routeMetadata['httpMethod'])."('".$url."', [".implode(", ", $options)."]);";
+                $contents .= "\$app->".strtolower($routeMetadata['httpMethod'])."('".$routeMetadata['url']."', [".implode(", ", $options)."]);" . PHP_EOL;
             }
         }
 
-        $contents = implode(PHP_EOL, $routes);
 
         return $contents;
     }

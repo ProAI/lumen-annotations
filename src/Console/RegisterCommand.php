@@ -7,7 +7,7 @@ use ProAI\RouteAnnotations\Metadata\ClassFinder;
 use ProAI\RouteAnnotations\Metadata\RouteScanner;
 use ProAI\RouteAnnotations\Routing\Generator;
 
-class RegisterCommand
+class RegisterCommand extends Command
 {
     /**
      * The console command name.
@@ -78,7 +78,7 @@ class RegisterCommand
     public function fire()
     {
         // get classes
-        $classes = $this->finder->getClassesFromNamespace($this->config['namespace']);
+        $classes = $this->finder->getClassesFromNamespace($this->config['controllers_namespace']);
 
         // build metadata
         $routes = $this->scanner->scan($classes);
