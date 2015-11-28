@@ -57,7 +57,7 @@ class CommandsServiceProvider extends ServiceProvider
         $app = $this->app;
 
         $app->singleton('route.annotations.generator', function ($app) {
-            $path = storage_path('/framework');
+            $path = storage_path('framework');
 
             return new Generator($app['files'], $path, 'routes.php');
         });
