@@ -34,7 +34,7 @@ By using annotations you can define your routes directly in your controller clas
 
 Annotation | Description
 --- | ---
-`@Controller` | Optional parameters `prefix` and `middleware`.
+`@Controller` | This annotation must be set to indicate that the class is a controller class. Optional parameters `prefix` and `middleware`.
 `@Resource` | First parameter is resource name. Optional parameters `only` and `except`.
 `@Middleware` | First parameter is middleware name.
 
@@ -96,6 +96,7 @@ use ProAI\RouteAnnotations\Annotations as Route;
 /**
  * Class annotations for resource controller CommentController (belongs to all class methods).
  *
+ * @Route\Controller
  * @Route\Resource("comments", only={"create", "index", "show"})
  * @Route\Middleware("auth")
  */
