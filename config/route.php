@@ -19,8 +19,8 @@ return [
     | Auto Scan
     |--------------------------------------------------------------------------
     |
-    | Automatically scan entity classes and update database on page load. This
-    | Option is useful in development mode.
+    | Automatically scan controller classes and update database on page load.
+    | This option is useful in development mode.
     |
     */
     

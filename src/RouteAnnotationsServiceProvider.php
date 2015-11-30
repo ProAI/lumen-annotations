@@ -13,12 +13,14 @@ class RouteAnnotationsServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $app = $this->app;
+
         $this->registerConfig();
 
         $this->app->register('ProAI\RouteAnnotations\Providers\CommandsServiceProvider');
 
-        if ($this->app->config('route.annotations.auto_scan'))
-            $this->autoUpdateDatabase();
+        if ($app['config']['route.auto_scan'])
+            $this->autoUpdateRoutes();
     }
 
     /**
@@ -36,12 +38,12 @@ class RouteAnnotationsServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function updateRoutes()
+    public function autoUpdateRoutes()
     {
-        $app = app();
+        $app = $this->app;
 
         // get classes
-        $classes = $app['route.annotations.classfinder']->getClassesFromNamespace(config('route.controllers_namespace'));
+        $classes = $app['route.annotations.classfinder']->getClassesFromNamespace($app['config']['route.controllers_namespace']);
 
         // build metadata
         $routes = $app['route.annotations.scanner']->scan($classes);
