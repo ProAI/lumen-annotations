@@ -111,7 +111,7 @@ class Generator
                 // uses option
                 $options[] = "'uses' => '".$routeMetadata['controller']."@".$routeMetadata['controllerMethod']."'";
 
-                $contents .= "\$app->".strtolower($routeMetadata['httpMethod'])."('".$routeMetadata['url']."', [".implode(", ", $options)."]);" . PHP_EOL;
+                $contents .= "\$app->".strtolower($routeMetadata['httpMethod'])."('".$routeMetadata['uri']."', [".implode(", ", $options)."]);" . PHP_EOL;
             }
         }
 

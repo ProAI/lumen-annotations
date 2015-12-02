@@ -113,7 +113,7 @@ class RouteScanner
             // controller method is resource route
             if (! empty($resource) && in_array($name, $resource['methods'])) {
                 $routeMetadata = [
-                    'url' => $resource['name'].$this->getResourcePath($name),
+                    'uri' => $resource['name'].$this->getResourcePath($name),
                     'controller' => $class,
                     'controllerMethod' => $name,
                     'httpMethod' => $this->getResourceHttpMethod($name),
@@ -123,9 +123,9 @@ class RouteScanner
             }
 
             // controller method is route
-            if ($route = $this->hasHttpMethodAnnotation($methodAnnotations)) {
+            if ($route = $this->hasHttpMethodAnnotation($name, $methodAnnotations)) {
                 $routeMetadata = [
-                    'url' => $route['url'],
+                    'uri' => $route['uri'],
                     'controller' => $class,
                     'controllerMethod' => $name,
                     'httpMethod' => $route['httpMethod'],
@@ -145,7 +145,7 @@ class RouteScanner
 
                 // add global prefix and middleware
                 if (! empty($prefix)) {
-                    $routeMetadata['url'] = $prefix.'/'.$routeMetadata['url'];
+                    $routeMetadata['uri'] = $prefix.'/'.$routeMetadata['uri'];
                 }
                 if (! empty($middleware) && empty($routeMetadata['middleware'])) {
                     $routeMetadata['middleware'] = $middleware;
@@ -203,10 +203,11 @@ class RouteScanner
     /**
      * Check for http method.
      *
+     * @param string $name
      * @param array $methodAnnotations
      * @return string
      */
-    protected function hasHttpMethodAnnotation($methodAnnotations)
+    protected function hasHttpMethodAnnotation($name, $methodAnnotations)
     {
         foreach ($methodAnnotations as $annotation) {
             // check for http method annotation
@@ -247,8 +248,10 @@ class RouteScanner
             $as = (! empty($annotation->as)) ? $annotation->as : '';
             $middleware = (! empty($annotation->middleware)) ? $annotation->middleware : '';
 
+            $uri = (empty($annotation->value)) ? str_replace("_", "-", snake_case($name)) : $annotation->value;
+
             return [
-                'url' => $annotation->value,
+                'uri' => $uri,
                 'httpMethod' => $httpMethod,
                 'as' => $as,
                 'middleware' => $middleware
