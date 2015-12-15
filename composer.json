@@ -12,7 +12,6 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "laravel/lumen-framework": "5.*",
         "doctrine/annotations": "~1.2"
     },
     "autoload": {
