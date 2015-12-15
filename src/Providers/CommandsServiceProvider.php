@@ -94,7 +94,7 @@ class CommandsServiceProvider extends ServiceProvider
         $this->app->singleton('command.route.scan', function ($app) {
             return new RouteScanCommand(
                 $app['annotations.classfinder'],
-                $app['annotations.scanner'],
+                $app['annotations.route.scanner'],
                 $app['annotations.route.generator'],
                 $app['config']['annotations']
             );

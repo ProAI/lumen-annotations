@@ -46,9 +46,9 @@ class AnnotationsServiceProvider extends ServiceProvider
         $classes = $app['annotations.classfinder']->getClassesFromNamespace($app['config']['annotations.routes_namespace']);
 
         // build metadata
-        $routes = $app['annotations.scanner']->scan($classes);
+        $routes = $app['annotations.route.scanner']->scan($classes);
 
         // generate routes.php file for scanned routes
-        $app['annotations.generator']->generate($routes);
+        $app['annotations.route.generator']->generate($routes);
     }
 }
