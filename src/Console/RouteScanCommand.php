@@ -1,46 +1,46 @@
 <?php
 
-namespace ProAI\RouteAnnotations\Console;
+namespace ProAI\Annotations\Console;
 
 use Illuminate\Console\Command;
-use ProAI\RouteAnnotations\Metadata\ClassFinder;
-use ProAI\RouteAnnotations\Metadata\RouteScanner;
-use ProAI\RouteAnnotations\Routing\Generator;
+use ProAI\Annotations\Metadata\ClassFinder;
+use ProAI\Annotations\Metadata\RouteScanner;
+use ProAI\Annotations\Routing\Generator;
 
-class RegisterCommand extends Command
+class RouteScanCommand extends Command
 {
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'route:register';
+    protected $name = 'route:scan';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Register all routes with route annotations.';
+    protected $description = 'Scan all routes with route annotations.';
 
     /**
      * The class finder instance.
      *
-     * @var \ProAI\RouteAnnotations\Metadata\ClassFinder
+     * @var \ProAI\Annotations\Metadata\ClassFinder
      */
     protected $finder;
 
     /**
      * The route scanner instance.
      *
-     * @var \ProAI\RouteAnnotations\Metadata\RouteScanner
+     * @var \ProAI\Annotations\Metadata\RouteScanner
      */
     protected $scanner;
 
     /**
      * The routes generator instance.
      *
-     * @var \ProAI\RouteAnnotations\Routing\Generator
+     * @var \ProAI\Annotations\Routing\Generator
      */
     protected $generator;
 
@@ -54,9 +54,9 @@ class RegisterCommand extends Command
     /**
      * Create a new migration install command instance.
      *
-     * @param \ProAI\RouteAnnotations\Metadata\ClassFinder $finder
-     * @param \ProAI\RouteAnnotations\Metadata\RouteScanner $scanner
-     * @param \ProAI\RouteAnnotations\Routing\Generator $generator
+     * @param \ProAI\Annotations\Metadata\ClassFinder $finder
+     * @param \ProAI\Annotations\Metadata\RouteScanner $scanner
+     * @param \ProAI\Annotations\Routing\Generator $generator
      * @param array $config
      * @return void
      */
@@ -78,7 +78,7 @@ class RegisterCommand extends Command
     public function fire()
     {
         // get classes
-        $classes = $this->finder->getClassesFromNamespace($this->config['controllers_namespace']);
+        $classes = $this->finder->getClassesFromNamespace($this->config['routes_namespace']);
 
         // build metadata
         $routes = $this->scanner->scan($classes);

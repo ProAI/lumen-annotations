@@ -1,6 +1,6 @@
 <?php
 
-namespace ProAI\RouteAnnotations\Metadata;
+namespace ProAI\Annotations\Metadata;
 
 use Illuminate\Console\AppNamespaceDetectorTrait;
 use Illuminate\Filesystem\ClassFinder as FilesystemClassFinder;

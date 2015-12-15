@@ -1,8 +1,8 @@
 {
-    "name": "proai/lumen-route-annotations",
-    "description": "Route Annotations for Laravel Lumen.",
-    "keywords": ["laravel","lumen","route","routes","router","annotations"],
-    "homepage": "http://github.com/proai/lumen-route-annotations",
+    "name": "proai/lumen-annotations",
+    "description": "Route and event binding annotations for Laravel Lumen",
+    "keywords": ["laravel","lumen","route","routes","router","annotations","event","event binding"],
+    "homepage": "http://github.com/proai/lumen-annotations",
     "license": "MIT",
     "authors": [
         {
@@ -12,12 +12,12 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "laravel/lumen-framework": "5.1.*",
+        "laravel/lumen-framework": "5.*",
         "doctrine/annotations": "~1.2"
     },
     "autoload": {
         "psr-4": {
-            "ProAI\\RouteAnnotations\\": "src/"
+            "ProAI\\Annotations\\": "src/"
         }
     },
     "extra": {

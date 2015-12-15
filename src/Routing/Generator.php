@@ -1,6 +1,6 @@
 <?php
 
-namespace ProAI\RouteAnnotations\Routing;
+namespace ProAI\Annotations\Routing;
 
 use Illuminate\Filesystem\Filesystem;
 

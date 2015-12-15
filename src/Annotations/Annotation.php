@@ -1,6 +1,6 @@
 <?php
 
-namespace ProAI\RouteAnnotations\Annotations;
+namespace ProAI\Annotations\Annotations;
 
 interface Annotation
 {

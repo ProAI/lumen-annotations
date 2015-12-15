@@ -1,6 +1,6 @@
 <?php
 
-namespace ProAI\RouteAnnotations\Metadata;
+namespace ProAI\Annotations\Metadata;
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Illuminate\Filesystem\Filesystem;

@@ -1,11 +1,11 @@
 <?php
 
-namespace ProAI\RouteAnnotations\Console;
+namespace ProAI\Annotations\Console;
 
 use Illuminate\Console\Command;
-use ProAI\RouteAnnotations\Routing\Generator;
+use ProAI\Annotations\Routing\Generator;
 
-class ClearCommand extends Command
+class RouteClearCommand extends Command
 {
     /**
      * The console command name.
@@ -24,14 +24,14 @@ class ClearCommand extends Command
     /**
      * The routes generator instance.
      *
-     * @var \ProAI\RouteAnnotations\Routing\Generator
+     * @var \ProAI\Annotations\Routing\Generator
      */
     protected $generator;
 
     /**
      * Create a new migration install command instance.
      *
-     * @param \ProAI\RouteAnnotations\Routing\Generator $generator
+     * @param \ProAI\Annotations\Routing\Generator $generator
      * @return void
      */
     public function __construct(Generator $generator)

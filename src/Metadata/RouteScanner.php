@@ -1,6 +1,6 @@
 <?php
 
-namespace ProAI\RouteAnnotations\Metadata;
+namespace ProAI\Annotations\Metadata;
 
 use ReflectionClass;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -57,7 +57,7 @@ class RouteScanner
         $reflectionClass = new ReflectionClass($class);
 
         // check if class is entity
-        if ($annotation = $this->reader->getClassAnnotation($reflectionClass, '\ProAI\RouteAnnotations\Annotations\Controller')) {
+        if ($annotation = $this->reader->getClassAnnotation($reflectionClass, '\ProAI\Annotations\Annotations\Controller')) {
             return $this->parseController($class);
         } else {
             return null;
@@ -80,16 +80,16 @@ class RouteScanner
         // find entity parameters and plugins
         foreach ($classAnnotations as $annotation) {
             // controller attributes
-            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Controller) {
+            if ($annotation instanceof \ProAI\Annotations\Annotations\Controller) {
                 $prefix = $annotation->prefix;
                 $middleware = $annotation->middleware;
             }
-            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Middleware) {
+            if ($annotation instanceof \ProAI\Annotations\Annotations\Middleware) {
                 $middleware = $annotation->value;
             }
 
             // resource controller
-            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Resource) {
+            if ($annotation instanceof \ProAI\Annotations\Annotations\Resource) {
                 $resourceMethods = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
                 if (! empty($annotation->only)) {
                     $resourceMethods = array_intersect($resourceMethods, $annotation->only);
@@ -138,7 +138,7 @@ class RouteScanner
             if (! empty($routeMetadata)) {
                 // add other method annotations
                 foreach ($methodAnnotations as $annotation) {
-                    if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Middleware) {
+                    if ($annotation instanceof \ProAI\Annotations\Annotations\Middleware) {
                         $routeMetadata['middleware'] = $annotation->value;
                     }
                 }
@@ -211,31 +211,31 @@ class RouteScanner
     {
         foreach ($methodAnnotations as $annotation) {
             // check for http method annotation
-            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Get) {
+            if ($annotation instanceof \ProAI\Annotations\Annotations\Get) {
                 $httpMethod = 'GET';
                 break;
             }
-            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Post) {
+            if ($annotation instanceof \ProAI\Annotations\Annotations\Post) {
                 $httpMethod = 'POST';
                 break;
             }
-            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Options) {
+            if ($annotation instanceof \ProAI\Annotations\Annotations\Options) {
                 $httpMethod = 'OPTIONS';
                 break;
             }
-            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Put) {
+            if ($annotation instanceof \ProAI\Annotations\Annotations\Put) {
                 $httpMethod = 'PUT';
                 break;
             }
-            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Patch) {
+            if ($annotation instanceof \ProAI\Annotations\Annotations\Patch) {
                 $httpMethod = 'PATCH';
                 break;
             }
-            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Delete) {
+            if ($annotation instanceof \ProAI\Annotations\Annotations\Delete) {
                 $httpMethod = 'DELETE';
                 break;
             }
-            if ($annotation instanceof \ProAI\RouteAnnotations\Annotations\Any) {
+            if ($annotation instanceof \ProAI\Annotations\Annotations\Any) {
                 $httpMethod = 'ANY';
                 break;
             }

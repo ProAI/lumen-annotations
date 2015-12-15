@@ -1,12 +1,12 @@
 <?php
 
-namespace ProAI\RouteAnnotations\Providers;
+namespace ProAI\Annotations\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use ProAI\RouteAnnotations\Metadata\RouteScanner;
-use ProAI\RouteAnnotations\Routing\Generator;
-use ProAI\RouteAnnotations\Console\RegisterCommand;
-use ProAI\RouteAnnotations\Console\ClearCommand;
+use ProAI\Annotations\Metadata\RouteScanner;
+use ProAI\Annotations\Routing\Generator;
+use ProAI\Annotations\Console\RouteScanCommand;
+use ProAI\Annotations\Console\RouteClearCommand;
 
 class CommandsServiceProvider extends ServiceProvider
 {
@@ -24,7 +24,7 @@ class CommandsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->register('ProAI\RouteAnnotations\Providers\MetadataServiceProvider');
+        $this->app->register('ProAI\Annotations\Providers\MetadataServiceProvider');
 
         $this->registerScanner();
 
@@ -40,8 +40,8 @@ class CommandsServiceProvider extends ServiceProvider
      */
     protected function registerScanner()
     {
-        $this->app->singleton('route.annotations.scanner', function ($app) {
-            $reader = $app['route.annotations.annotationreader'];
+        $this->app->singleton('annotations.route.scanner', function ($app) {
+            $reader = $app['annotations.annotationreader'];
 
             return new RouteScanner($reader);
         });
@@ -56,7 +56,7 @@ class CommandsServiceProvider extends ServiceProvider
     {
         $app = $this->app;
 
-        $app->singleton('route.annotations.generator', function ($app) {
+        $app->singleton('annotations.route.generator', function ($app) {
             $path = storage_path('framework');
 
             return new Generator($app['files'], $path, 'routes.php');
@@ -71,7 +71,7 @@ class CommandsServiceProvider extends ServiceProvider
     protected function registerCommands()
     {
         // create singletons of each command
-        $commands = array('Register', 'Clear');
+        $commands = array('RouteScan', 'RouteClear');
 
         foreach ($commands as $command) {
             $this->{'register'.$command.'Command'}();
@@ -79,24 +79,24 @@ class CommandsServiceProvider extends ServiceProvider
 
         // register commands
         $this->commands(
-            'command.route.register',
+            'command.route.scan',
             'command.route.clear'
         );
     }
 
     /**
-     * Register the "route:register" command.
+     * Register the "route:scan" command.
      *
      * @return void
      */
-    protected function registerRegisterCommand()
+    protected function registerRouteScanCommand()
     {
-        $this->app->singleton('command.route.register', function ($app) {
-            return new RegisterCommand(
-                $app['route.annotations.classfinder'],
-                $app['route.annotations.scanner'],
-                $app['route.annotations.generator'],
-                $app['config']['route']
+        $this->app->singleton('command.route.scan', function ($app) {
+            return new RouteScanCommand(
+                $app['annotations.classfinder'],
+                $app['annotations.scanner'],
+                $app['annotations.route.generator'],
+                $app['config']['annotations']
             );
         });
     }
@@ -106,11 +106,11 @@ class CommandsServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function registerClearCommand()
+    protected function registerRouteClearCommand()
     {
         $this->app->singleton('command.route.clear', function ($app) {
-            return new ClearCommand(
-                $app['route.annotations.generator']
+            return new RouteClearCommand(
+                $app['annotations.route.generator']
             );
         });
     }
@@ -123,9 +123,9 @@ class CommandsServiceProvider extends ServiceProvider
     public function provides()
     {
         return [
-            'route.annotations.scanner',
-            'route.annotations.generator',
-            'command.route.register',
+            'annotations.route.scanner',
+            'annotations.route.generator',
+            'command.route.scan',
             'command.route.clear'
         ];
     }

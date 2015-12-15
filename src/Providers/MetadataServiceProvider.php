@@ -1,11 +1,11 @@
 <?php
 
-namespace ProAI\RouteAnnotations\Providers;
+namespace ProAI\Annotations\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use ProAI\RouteAnnotations\Metadata\ClassFinder;
+use ProAI\Annotations\Metadata\ClassFinder;
 use Illuminate\Filesystem\ClassFinder as FilesystemClassFinder;
-use ProAI\RouteAnnotations\Metadata\AnnotationLoader;
+use ProAI\Annotations\Metadata\AnnotationLoader;
 use Doctrine\Common\Annotations\AnnotationReader;
 
 class MetadataServiceProvider extends ServiceProvider
@@ -52,7 +52,7 @@ class MetadataServiceProvider extends ServiceProvider
      */
     protected function registerAnnotationReader()
     {
-        $this->app->singleton('route.annotations.annotationreader', function ($app) {
+        $this->app->singleton('annotations.annotationreader', function ($app) {
             return new AnnotationReader;
         });
     }
@@ -64,7 +64,7 @@ class MetadataServiceProvider extends ServiceProvider
      */
     protected function registerClassFinder()
     {
-        $this->app->singleton('route.annotations.classfinder', function ($app) {
+        $this->app->singleton('annotations.classfinder', function ($app) {
             $finder = new FilesystemClassFinder;
 
             return new ClassFinder($finder);
@@ -79,8 +79,8 @@ class MetadataServiceProvider extends ServiceProvider
     public function provides()
     {
         return [
-            'route.annotations.classfinder',
-            'route.annotations.annotationreader',
+            'annotations.classfinder',
+            'annotations.annotationreader',
         ];
     }
 }
