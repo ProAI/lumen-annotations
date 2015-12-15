@@ -1,24 +1,24 @@
-# Lumen Route Annotations
+# Lumen Annotations
 
-[![Latest Stable Version](https://poser.pugx.org/proai/lumen-route-annotations/v/stable)](https://packagist.org/packages/proai/lumen-route-annotations) [![Total Downloads](https://poser.pugx.org/proai/lumen-route-annotations/downloads)](https://packagist.org/packages/proai/lumen-route-annotations) [![Latest Unstable Version](https://poser.pugx.org/proai/lumen-route-annotations/v/unstable)](https://packagist.org/packages/proai/lumen-route-annotations) [![License](https://poser.pugx.org/proai/lumen-route-annotations/license)](https://packagist.org/packages/proai/lumen-route-annotations)
+[![Latest Stable Version](https://poser.pugx.org/proai/lumen-annotations/v/stable)](https://packagist.org/packages/proai/lumen-annotations) [![Total Downloads](https://poser.pugx.org/proai/lumen-annotations/downloads)](https://packagist.org/packages/proai/lumen-annotations) [![Latest Unstable Version](https://poser.pugx.org/proai/lumen-annotations/v/unstable)](https://packagist.org/packages/proai/lumen-annotations) [![License](https://poser.pugx.org/proai/lumen-annotations/license)](https://packagist.org/packages/proai/lumen-annotations)
 
-This package enables annotations in Laravel Lumen to define routes.
+This package enables annotations in Laravel Lumen to define routes and event bindings.
 
 ## Installation
 
-Lumen Route Annotationsis distributed as a composer package. So you first have to add the package to your `composer.json` file:
+Lumen Annotations is distributed as a composer package. So you first have to add the package to your `composer.json` file:
 
 ```
-"proai/lumen-route-annotations": "~1.0@dev"
+"proai/lumen-annotations": "~1.0@dev"
 ```
 
 Then you have to run `composer update` to install the package. Once this is completed, you have to add the service provider to the providers array in `config/app.php`:
 
 ```
-'ProAI\RouteAnnotations\RouteAnnotationsServiceProvider'
+'ProAI\Annotations\AnnotationsServiceProvider'
 ```
 
-Copy `config/route.php` from this package to your configuration directory to use a custom configuration file.
+Copy `config/annotations.php` from this package to your configuration directory to use a custom configuration file.
 
 Once you have run `php artisan route:register` (see below), you have to include the generated `routes.php` file in your `bootstrap/app.php` file:
 
@@ -28,9 +28,11 @@ require __DIR__.'/../storage/framework/routes.php';
 
 ## Usage
 
-By using annotations you can define your routes directly in your controller classes (see examples for usage of annotations).
+By using annotations you can define your routes directly in your controller classes and your event bindings directly in your event handlers (see examples for usage of annotations).
 
 ##### Class Annotations
+
+For routes:
 
 Annotation | Description
 --- | ---
@@ -38,7 +40,15 @@ Annotation | Description
 `@Resource` | First parameter is resource name. Optional parameters `only` and `except`.
 `@Middleware` | First parameter is middleware name.
 
+For events:
+
+Annotation | Description
+--- | ---
+`@Hears` | This annotation binds an event handler class to an event.
+
 ##### Method Annotations
+
+For routes:
 
 Annotation | Description
 --- | ---
@@ -47,10 +57,12 @@ Annotation | Description
 
 ### Commands
 
-After you have defined the routes via annotations, you have to run `php artisan route:register`:
+After you have defined the routes and event bindings via annotations, you have to run the scan command:
 
-* Use `php artisan route:register` to register all routes.
+* Use `php artisan route:scan` to register all routes.
 * Use `php artisan route:clear` to clear the registered routes.
+* Use `php artisan event:scan` to register all event bindings.
+* Use `php artisan event:clear` to clear the registered events.
 
 ### Examples
 
@@ -61,7 +73,7 @@ After you have defined the routes via annotations, you have to run `php artisan 
 
 namespace App\Http\Controllers;
 
-use ProAI\RouteAnnotations\Annotations as Route;
+use ProAI\Annotations\Annotations as Route;
 
 /**
  * Class annotation for UserController (belongs to all class methods).
@@ -91,7 +103,7 @@ class UserController
 
 namespace App\Http\Controllers;
 
-use ProAI\RouteAnnotations\Annotations as Route;
+use ProAI\Annotations\Annotations as Route;
 
 /**
  * Class annotations for resource controller CommentController (belongs to all class methods).
@@ -106,9 +118,29 @@ class CommentController
 }
 ```
 
+##### Example #3
+
+```php
+<?php
+
+namespace App\Handlers\Events;
+
+use ProAI\Annotations\Annotations as Event;
+
+/**
+ * Annotation for event binding.
+ *
+ * @Event\Handler(bind="UserWasRegistered")
+ */
+class SendWelcomeMail
+{
+    ...
+}
+```
+
 ## Support
 
-Bugs and feature requests are tracked on [GitHub](https://github.com/proai/lumen-route-annotations/issues).
+Bugs and feature requests are tracked on [GitHub](https://github.com/proai/lumen-annotations/issues).
 
 ## License
 
