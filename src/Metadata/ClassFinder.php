@@ -29,37 +29,41 @@ class ClassFinder
     }
 
     /**
-     * Get all classes for a namespace.
+     * Get all classes for a given namespace.
      *
-     * @param string namespace
+     * @param string $namespace
      * @return array
      */
-    public function getClassesFromNamespace($namespace=null)
+    public function getClassesFromNamespace($namespace = null)
     {
-        $base_namespace = $namespace ?: $this->getAppNamespace();
+        $namespace = $namespace ?: $this->getAppNamespace();
 
-        $path = $this->stripNamespace($base_namespace, $this->getAppNamespace());
+        $path = $this->convertNamespaceToPath($namespace);
 
-        $directory = app('path') . '/' . $path;
-
-        return $this->finder->findClasses($directory);
+        return $this->finder->findClasses($path);
     }
 
     /**
-     * Strip given namespace from class.
+     * Convert given namespace to file path.
      *
-     * @param string|object $class
      * @param string $namespace
      * @return string|null
      */
-    protected function stripNamespace($class, $namespace)
+    protected function convertNamespaceToPath($namespace)
     {
-        $class = (is_object($class)) ? get_class($class) : $class;
+        // strip app namespace
+        $appNamespace = $this->getAppNamespace();
 
-        if (substr($class, 0, strlen($namespace)) == $namespace) {
-            return substr($class, strlen($namespace));
+        if (! substr($namespace, 0, strlen($appNamespace)) == $appNamespace) {
+            return null;
         }
-        
-        return null;
+
+        $subNamespace = substr($namespace, strlen($appNamespace));
+
+        // replace \ with / to get the correct file path
+        $subPath = str_replace('\\', '/', $subNamespace);
+
+        // create path
+        return app('path') . '/' . $subPath;
     }
 }
