@@ -4,9 +4,13 @@ namespace ProAI\Annotations\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use ProAI\Annotations\Metadata\RouteScanner;
-use ProAI\Annotations\Routing\Generator;
+use ProAI\Annotations\Routing\Generator as RouteGenerator;
+use ProAI\Annotations\Metadata\EventScanner;
+use ProAI\Annotations\Events\Generator as EventGenerator;
 use ProAI\Annotations\Console\RouteScanCommand;
 use ProAI\Annotations\Console\RouteClearCommand;
+use ProAI\Annotations\Console\EventScanCommand;
+use ProAI\Annotations\Console\EventClearCommand;
 
 class CommandsServiceProvider extends ServiceProvider
 {
@@ -26,19 +30,23 @@ class CommandsServiceProvider extends ServiceProvider
     {
         $this->app->register('ProAI\Annotations\Providers\MetadataServiceProvider');
 
-        $this->registerScanner();
+        $this->registerRouteScanner();
 
-        $this->registerGenerator();
+        $this->registerRouteGenerator();
+
+        $this->registerEventScanner();
+
+        $this->registerEventGenerator();
 
         $this->registerCommands();
     }
 
     /**
-     * Register the scanner implementation.
+     * Register the route scanner implementation.
      *
      * @return void
      */
-    protected function registerScanner()
+    protected function registerRouteScanner()
     {
         $this->app->singleton('annotations.route.scanner', function ($app) {
             $reader = $app['annotations.annotationreader'];
@@ -48,18 +56,48 @@ class CommandsServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the generator implementation.
+     * Register the route generator implementation.
      *
      * @return void
      */
-    protected function registerGenerator()
+    protected function registerRouteGenerator()
     {
         $app = $this->app;
 
         $app->singleton('annotations.route.generator', function ($app) {
             $path = storage_path('framework');
 
-            return new Generator($app['files'], $path, 'routes.php');
+            return new RouteGenerator($app['files'], $path, 'routes.php');
+        });
+    }
+
+    /**
+     * Register the event scanner implementation.
+     *
+     * @return void
+     */
+    protected function registerEventScanner()
+    {
+        $this->app->singleton('annotations.event.scanner', function ($app) {
+            $reader = $app['annotations.annotationreader'];
+
+            return new EventScanner($reader, $app['config']['annotations']);
+        });
+    }
+
+    /**
+     * Register the event generator implementation.
+     *
+     * @return void
+     */
+    protected function registerEventGenerator()
+    {
+        $app = $this->app;
+
+        $app->singleton('annotations.event.generator', function ($app) {
+            $path = storage_path('framework');
+
+            return new EventGenerator($app['files'], $path, 'events.php');
         });
     }
 
@@ -71,7 +109,7 @@ class CommandsServiceProvider extends ServiceProvider
     protected function registerCommands()
     {
         // create singletons of each command
-        $commands = array('RouteScan', 'RouteClear');
+        $commands = array('RouteScan', 'RouteClear', 'EventScan', 'EventClear');
 
         foreach ($commands as $command) {
             $this->{'register'.$command.'Command'}();
@@ -80,7 +118,9 @@ class CommandsServiceProvider extends ServiceProvider
         // register commands
         $this->commands(
             'command.route.scan',
-            'command.route.clear'
+            'command.route.clear',
+            'command.event.scan',
+            'command.event.clear'
         );
     }
 
@@ -116,6 +156,37 @@ class CommandsServiceProvider extends ServiceProvider
     }
 
     /**
+     * Register the "event:scan" command.
+     *
+     * @return void
+     */
+    protected function registerEventScanCommand()
+    {
+        $this->app->singleton('command.event.scan', function ($app) {
+            return new EventScanCommand(
+                $app['annotations.classfinder'],
+                $app['annotations.event.scanner'],
+                $app['annotations.event.generator'],
+                $app['config']['annotations']
+            );
+        });
+    }
+
+    /**
+     * Register the "event:clear" command.
+     *
+     * @return void
+     */
+    protected function registerEventClearCommand()
+    {
+        $this->app->singleton('command.event.clear', function ($app) {
+            return new EventClearCommand(
+                $app['annotations.event.generator']
+            );
+        });
+    }
+
+    /**
      * Get the services provided by the provider.
      *
      * @return array
@@ -125,8 +196,12 @@ class CommandsServiceProvider extends ServiceProvider
         return [
             'annotations.route.scanner',
             'annotations.route.generator',
+            'annotations.event.scanner',
+            'annotations.event.generator',
             'command.route.scan',
-            'command.route.clear'
+            'command.route.clear',
+            'command.event.scan',
+            'command.event.clear'
         ];
     }
 }

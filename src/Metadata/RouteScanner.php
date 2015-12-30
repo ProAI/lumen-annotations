@@ -56,7 +56,7 @@ class RouteScanner
     {
         $reflectionClass = new ReflectionClass($class);
 
-        // check if class is entity
+        // check if class is controller
         if ($annotation = $this->reader->getClassAnnotation($reflectionClass, '\ProAI\Annotations\Annotations\Controller')) {
             return $this->parseController($class);
         } else {
@@ -68,7 +68,7 @@ class RouteScanner
      * Parse a controller class.
      *
      * @param string $class
-     * @return string
+     * @return array
      */
     public function parseController($class)
     {

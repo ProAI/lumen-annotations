@@ -54,7 +54,7 @@ class ClassFinder
         // strip app namespace
         $appNamespace = $this->getAppNamespace();
 
-        if (! substr($namespace, 0, strlen($appNamespace)) == $appNamespace) {
+        if (substr($namespace, 0, strlen($appNamespace)) != $appNamespace) {
             return null;
         }
 

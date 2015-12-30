@@ -38,7 +38,19 @@ class AnnotationsServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerAutoScanAnnotations()
+    protected function registerAutoScanAnnotations()
+    {
+        $this->registerAutoScanRouteAnnotations();
+
+        $this->registerAutoScanEventAnnotations();
+    }
+
+    /**
+     * Auto update routes.
+     *
+     * @return void
+     */
+    protected function registerAutoScanRouteAnnotations()
     {
         $app = $this->app;
 
@@ -50,5 +62,24 @@ class AnnotationsServiceProvider extends ServiceProvider
 
         // generate routes.php file for scanned routes
         $app['annotations.route.generator']->generate($routes);
+    }
+
+    /**
+     * Auto update event bindings.
+     *
+     * @return void
+     */
+    protected function registerAutoScanEventAnnotations()
+    {
+        $app = $this->app;
+
+        // get classes
+        $classes = $app['annotations.classfinder']->getClassesFromNamespace($app['config']['annotations.events_namespace']);
+
+        // build metadata
+        $events = $app['annotations.event.scanner']->scan($classes);
+
+        // generate events.php file for scanned routes
+        $app['annotations.event.generator']->generate($events);
     }
 }

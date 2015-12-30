@@ -43,7 +43,7 @@ class Generator
     }
 
     /**
-     * Generate routes from metadata.
+     * Generate routes from metadata and save to file.
      *
      * @param array $metadata
      * @param boolean $saveMode
@@ -76,7 +76,7 @@ class Generator
     }
 
     /**
-     * Generate model from metadata.
+     * Generate routes from metadata.
      *
      * @param array $metadata
      * @return void
