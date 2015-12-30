@@ -20,10 +20,20 @@ Then you have to run `composer update` to install the package. Once this is comp
 
 Copy `config/annotations.php` from this package to your configuration directory to use a custom configuration file.
 
-Once you have run `php artisan route:register` (see below), you have to include the generated `routes.php` file in your `bootstrap/app.php` file:
+##### Include generated routes
+
+Once you have run `php artisan route:scan` (see below), you have to include the generated `routes.php` file in your `bootstrap/app.php` file:
 
 ```php
 require __DIR__.'/../storage/framework/routes.php';
+```
+
+##### Include generated event bindings
+
+After you have executed `php artisan event:scan` (see below), you have to add the service provider to the providers array in `config/app.php`:
+
+```
+'ProAI\Annotations\EventServiceProvider'
 ```
 
 ## Usage
