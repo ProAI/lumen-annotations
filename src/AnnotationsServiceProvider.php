@@ -7,20 +7,29 @@ use Illuminate\Support\ServiceProvider;
 class AnnotationsServiceProvider extends ServiceProvider
 {
     /**
+     * Perform post-registration booting of services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        if ($this->app['config']['annotations.auto_scan']) {
+            $this->scanRoutes();
+
+            $this->scanEvents();
+        }
+    }
+
+    /**
      * Register the application services.
      *
      * @return void
      */
     public function register()
     {
-        $app = $this->app;
-
         $this->registerConfig();
 
         $this->app->register('ProAI\Annotations\Providers\CommandsServiceProvider');
-
-        if ($app['config']['annotations.auto_scan'])
-            $this->registerAutoScanAnnotations();
     }
 
     /**
@@ -34,23 +43,11 @@ class AnnotationsServiceProvider extends ServiceProvider
     }
 
     /**
-     * Scan annotations and update routes and event bindings.
-     *
-     * @return void
-     */
-    protected function registerAutoScanAnnotations()
-    {
-        $this->registerAutoScanRouteAnnotations();
-
-        $this->registerAutoScanEventAnnotations();
-    }
-
-    /**
      * Auto update routes.
      *
      * @return void
      */
-    protected function registerAutoScanRouteAnnotations()
+    protected function scanRoutes()
     {
         $app = $this->app;
 
@@ -69,7 +66,7 @@ class AnnotationsServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function registerAutoScanEventAnnotations()
+    protected function scanEvents()
     {
         $app = $this->app;
 
