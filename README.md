@@ -135,12 +135,12 @@ class CommentController
 
 namespace App\Handlers\Events;
 
-use ProAI\Annotations\Annotations as EventHandler;
+use ProAI\Annotations\Annotations\Hears;
 
 /**
  * Annotation for event binding.
  *
- * @EventHandler\Hears("UserWasRegistered")
+ * @Hears("UserWasRegistered")
  */
 class SendWelcomeMail
 {
