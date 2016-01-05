@@ -7,14 +7,19 @@ use Illuminate\Filesystem\ClassFinder as FilesystemClassFinder;
 
 class ClassFinder
 {
-    use AppNamespaceDetectorTrait;
-
     /**
      * The class finder instance.
      *
      * @var \Illuminate\Filesystem\ClassFinder
      */
     protected $finder;
+
+    /**
+     * The application namespace.
+     *
+     * @var string
+     */
+    protected $namespace;
 
     /**
      * Create a new metadata builder instance.
@@ -65,5 +70,31 @@ class ClassFinder
 
         // create path
         return app('path') . '/' . $subPath;
+    }
+
+    /**
+     * Get the application namespace.
+     *
+     * @return string
+     *
+     * @throws \RuntimeException
+     */
+    public function getAppNamespace()
+    {
+        if (! is_null($this->namespace)) {
+            return $this->namespace;
+        }
+
+        $composer = json_decode(file_get_contents(base_path().'/composer.json'), true);
+
+        foreach ((array) data_get($composer, 'autoload.psr-4') as $namespace => $path) {
+            foreach ((array) $path as $pathChoice) {
+                if (realpath(app('path')) == realpath(base_path().'/'.$pathChoice)) {
+                    return $this->namespace = $namespace;
+                }
+            }
+        }
+        
+        throw new RuntimeException('Unable to detect application namespace.');
     }
 }
