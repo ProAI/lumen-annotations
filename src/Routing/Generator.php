@@ -100,10 +100,11 @@ class Generator
 
                 // middleware option
                 if (! empty($routeMetadata['middleware'])) {
-                    if (is_array($routeMetadata['middleware'])) {
-                        $middleware = "['".implode("', '",$routeMetadata['middleware'])."']";
+                    $middleware = implode("', '",$routeMetadata['middleware']);
+                    if (count($routeMetadata['middleware']) > 1) {
+                        $middleware = "['".$middleware."']";
                     } else {
-                        $middleware = "'".$routeMetadata['middleware']."'";
+                        $middleware = "'".$middleware."'";
                     }
                     $options[] = "'middleware' => ".$middleware;
                 }

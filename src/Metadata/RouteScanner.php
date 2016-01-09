@@ -76,16 +76,17 @@ class RouteScanner
         $classAnnotations = $this->reader->getClassAnnotations($reflectionClass);
 
         $controllerMetadata = [];
+        $middleware = [];
 
         // find entity parameters and plugins
         foreach ($classAnnotations as $annotation) {
             // controller attributes
             if ($annotation instanceof \ProAI\Annotations\Annotations\Controller) {
                 $prefix = $annotation->prefix;
-                $middleware = $annotation->middleware;
+                $middleware = $this->addMiddleware($middleware, $annotation->middleware);
             }
             if ($annotation instanceof \ProAI\Annotations\Annotations\Middleware) {
-                $middleware = $annotation->value;
+                $middleware = $this->addMiddleware($middleware, $annotation->value);
             }
 
             // resource controller
@@ -136,19 +137,20 @@ class RouteScanner
 
             // add more route options to route metadata
             if (! empty($routeMetadata)) {
+                if (! empty($middleware)) {
+                    $routeMetadata['middleware'] = $middleware;
+                }
+
                 // add other method annotations
                 foreach ($methodAnnotations as $annotation) {
                     if ($annotation instanceof \ProAI\Annotations\Annotations\Middleware) {
-                        $routeMetadata['middleware'] = $annotation->value;
+                        $middleware = $this->addMiddleware($middleware, $routeMetadata['middleware']);
                     }
                 }
 
                 // add global prefix and middleware
                 if (! empty($prefix)) {
                     $routeMetadata['uri'] = $prefix.'/'.$routeMetadata['uri'];
-                }
-                if (! empty($middleware) && empty($routeMetadata['middleware'])) {
-                    $routeMetadata['middleware'] = $middleware;
                 }
 
                 $controllerMetadata[$name] = $routeMetadata;
@@ -246,7 +248,6 @@ class RouteScanner
         if (! empty($httpMethod)) {
             // options
             $as = (! empty($annotation->as)) ? $annotation->as : '';
-            $middleware = (! empty($annotation->middleware)) ? $annotation->middleware : '';
 
             $uri = (empty($annotation->value)) ? str_replace("_", "-", snake_case($name)) : $annotation->value;
 
@@ -254,10 +255,30 @@ class RouteScanner
                 'uri' => $uri,
                 'httpMethod' => $httpMethod,
                 'as' => $as,
-                'middleware' => $middleware
+                'middleware' => $this->addMiddleware([], $annotation->middleware)
             ];
         }
 
         return null;
+    }
+
+    /**
+     * Add middleware
+     *
+     * @param array $middleware
+     * @param array $newMiddleware
+     * @return array
+     */
+    protected function addMiddleware($middleware, $newMiddleware)
+    {
+        if (! empty($newMiddleware)) {
+            $newMiddleware = (is_array($newMiddleware))
+                ? $newMiddleware
+                : [$newMiddleware];
+
+            return array_merge($middleware, $newMiddleware);
+        }
+
+        return $middleware;
     }
 }
