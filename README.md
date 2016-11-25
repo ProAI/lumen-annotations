@@ -9,7 +9,7 @@ This package enables annotations in Laravel Lumen to define routes and event bin
 Lumen Annotations is distributed as a composer package. So you first have to add the package to your `composer.json` file:
 
 ```
-"proai/lumen-annotations": "~1.0@dev"
+"proai/lumen-annotations": "~1.0"
 ```
 
 Then you have to run `composer update` to install the package. Once this is completed, you have to add the service provider to the providers array in `config/app.php`:
