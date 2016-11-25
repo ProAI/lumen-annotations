@@ -12,10 +12,10 @@ Lumen Annotations is distributed as a composer package. So you first have to add
 "proai/lumen-annotations": "~1.0"
 ```
 
-Then you have to run `composer update` to install the package. Once this is completed, you have to add the service provider to the providers array in `config/app.php`:
+Then you have to run `composer update` to install the package. Once this is completed, you have to add the service provider to in `bootstrap/app.php`:
 
 ```
-'ProAI\Annotations\AnnotationsServiceProvider'
+$app->register(ProAI\Annotations\AnnotationsServiceProvider::class);
 ```
 
 Copy `config/annotations.php` from this package to your configuration directory to use a custom configuration file.
