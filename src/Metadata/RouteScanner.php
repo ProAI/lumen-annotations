@@ -228,7 +228,7 @@ class RouteScanner
     protected function hasHttpMethodAnnotation($name, $methodAnnotations)
     {
 
-        $scrapAnnotation = function ($httpMethod,$annotation){
+        $parseAnnotation = function ($httpMethod,$annotation){
           // options
           $as         = (! empty($annotation->as))          ? $annotation->as : '';
           $middleware = (! empty($annotation->middleware))  ? $annotation->middleware : '';
@@ -250,37 +250,37 @@ class RouteScanner
             // check for http method annotation
             if ($annotation instanceof \ProAI\Annotations\Annotations\Get) {
                 $httpMethod = 'GET';
-                $return[] = $scrapAnnotation($httpMethod,$annotation);
+                $return[] = $parseAnnotation($httpMethod,$annotation);
            //     break;
             }
             if ($annotation instanceof \ProAI\Annotations\Annotations\Post) {
                 $httpMethod = 'POST';
-                $return[] = $scrapAnnotation($httpMethod,$annotation);
+                $return[] = $parseAnnotation($httpMethod,$annotation);
                 //break;
             }
             if ($annotation instanceof \ProAI\Annotations\Annotations\Options) {
                 $httpMethod = 'OPTIONS';
-                $return[] = $scrapAnnotation($httpMethod,$annotation);
+                $return[] = $parseAnnotation($httpMethod,$annotation);
                // break;
             }
             if ($annotation instanceof \ProAI\Annotations\Annotations\Put) {
                 $httpMethod = 'PUT';
-                $return[] = $scrapAnnotation($httpMethod,$annotation);
+                $return[] = $parseAnnotation($httpMethod,$annotation);
                 //break;
             }
             if ($annotation instanceof \ProAI\Annotations\Annotations\Patch) {
                 $httpMethod = 'PATCH';
-                $return[] = $scrapAnnotation($httpMethod,$annotation);
+                $return[] = $parseAnnotation($httpMethod,$annotation);
                // break;
             }
             if ($annotation instanceof \ProAI\Annotations\Annotations\Delete) {
                 $httpMethod = 'DELETE';
-                $return[] = $scrapAnnotation($httpMethod,$annotation);
+                $return[] = $parseAnnotation($httpMethod,$annotation);
                 //break;
             }
             if ($annotation instanceof \ProAI\Annotations\Annotations\Any) {
                 $httpMethod = 'ANY';
-                $return[] = $scrapAnnotation($httpMethod,$annotation);
+                $return[] = $parseAnnotation($httpMethod,$annotation);
                 //break;
             }
 
