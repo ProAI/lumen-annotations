@@ -12,7 +12,7 @@
         {
             "name": "Rich Vigorito",
             "email": "richv@ocp.org"
-        },
+        }
     ],
     "require": {
         "php": ">=5.5.9",
