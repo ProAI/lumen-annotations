@@ -1,17 +1,13 @@
 {
-    "name": "richvigorito/lumen-annotations",
+    "name": "proai/lumen-annotations",
     "description": "Route and event binding annotations for Laravel Lumen",
     "keywords": ["laravel","lumen","route","routes","router","annotations","event","event binding"],
-    "homepage": "http://github.com/richvigorito/lumen-annotations",
+    "homepage": "http://github.com/proai/lumen-annotations",
     "license": "MIT",
     "authors": [
         {
             "name": "Markus J. Wetzel",
             "email": "markuswetzel@gmx.net"
-        },
-        {
-            "name": "Rich Vigorito",
-            "email": "richv@ocp.org"
         }
     ],
     "require": {
