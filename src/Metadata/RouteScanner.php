@@ -153,12 +153,17 @@ class RouteScanner
                 foreach($routeMetadatas as $routeMetadata){
                   $idx++;
 
-                  // add other method annotations
-                  foreach ($methodAnnotations as $annotation) {
-                    if ($annotation instanceof \ProAI\Annotations\Annotations\Middleware) {
-                        $routeMetadata['middleware'] = $annotation->value;
-                    }
+                // add other method annotations
+                foreach ($methodAnnotations as $annotation) {
+                  if ($annotation instanceof \ProAI\Annotations\Annotations\Middleware) {
+                      if (!empty($middleware) && isset($routeMetadata['middleware'])) {
+                          $routeMetadata['middleware'] = [$middleware, $annotation->value];
+                          continue;
+                      }
+
+                      $routeMetadata['middleware'] = $annotation->value;
                   }
+                }
 
                   // add global prefix and middleware
                   if (! empty($prefix)) {
