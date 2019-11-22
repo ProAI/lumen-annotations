@@ -4,7 +4,7 @@ namespace ProAI\Annotations\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use ProAI\Annotations\Metadata\ClassFinder;
-use Illuminate\Filesystem\ClassFinder as FilesystemClassFinder;
+use ProAI\Annotations\Filesystem\ClassFinder as FilesystemClassFinder;
 use ProAI\Annotations\Metadata\AnnotationLoader;
 use Doctrine\Common\Annotations\AnnotationReader;
 

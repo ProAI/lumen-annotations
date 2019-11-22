@@ -76,17 +76,16 @@ class RouteScanner
         $classAnnotations = $this->reader->getClassAnnotations($reflectionClass);
 
         $controllerMetadata = [];
-        $middleware = [];
 
         // find entity parameters and plugins
         foreach ($classAnnotations as $annotation) {
             // controller attributes
             if ($annotation instanceof \ProAI\Annotations\Annotations\Controller) {
                 $prefix = $annotation->prefix;
-                $middleware = $this->addMiddleware($middleware, $annotation->middleware);
+                $middleware = $annotation->middleware;
             }
             if ($annotation instanceof \ProAI\Annotations\Annotations\Middleware) {
-                $middleware = $this->addMiddleware($middleware, $annotation->value);
+                $middleware = $annotation->value;
             }
 
             // resource controller
@@ -107,9 +106,12 @@ class RouteScanner
         
         // find routes
         foreach ($reflectionClass->getMethods() as $reflectionMethod) {
+
             $name = $reflectionMethod->getName();
             $methodAnnotations = $this->reader->getMethodAnnotations($reflectionMethod);
+
             $routeMetadata = [];
+
 
             // controller method is resource route
             if (! empty($resource) && in_array($name, $resource['methods'])) {
@@ -124,8 +126,10 @@ class RouteScanner
             }
 
             // controller method is route
-            if ($route = $this->hasHttpMethodAnnotation($name, $methodAnnotations)) {
-                $routeMetadata = [
+            if ($routes = $this->hasHttpMethodAnnotation($name, $methodAnnotations)) {
+              $routeMetadata = [];
+              foreach($routes  as $route){
+                $routeMetadata[] = [
                     'uri' => $route['uri'],
                     'controller' => $class,
                     'controllerMethod' => $name,
@@ -133,27 +137,44 @@ class RouteScanner
                     'as' => $route['as'],
                     'middleware' => $route['middleware']
                 ];
+              }
             }
 
             // add more route options to route metadata
-            if (! empty($routeMetadata)) {
-                if (! empty($middleware)) {
-                    $routeMetadata['middleware'] = $middleware;
+            if (! empty($routeMetadata)) {  
+                if(!isset($routeMetadata[0])){
+                  $temp =  [];
+                  $temp[] = $routeMetadata;
+                  $routeMetadatas  = $temp;
+                } else {
+                  $routeMetadatas  = $routeMetadata;
                 }
+                $idx = 0;
+                foreach($routeMetadatas as $routeMetadata){
+                  $idx++;
 
                 // add other method annotations
                 foreach ($methodAnnotations as $annotation) {
-                    if ($annotation instanceof \ProAI\Annotations\Annotations\Middleware) {
-                        $middleware = $this->addMiddleware($middleware, $routeMetadata['middleware']);
-                    }
+                  if ($annotation instanceof \ProAI\Annotations\Annotations\Middleware) {
+                      if (!empty($middleware) && isset($routeMetadata['middleware'])) {
+                          $routeMetadata['middleware'] = [$middleware, $annotation->value];
+                          continue;
+                      }
+
+                      $routeMetadata['middleware'] = $annotation->value;
+                  }
                 }
 
-                // add global prefix and middleware
-                if (! empty($prefix)) {
+                  // add global prefix and middleware
+                  if (! empty($prefix)) {
                     $routeMetadata['uri'] = $prefix.'/'.$routeMetadata['uri'];
-                }
+                  }
+                  if (! empty($middleware) && empty($routeMetadata['middleware'])) {
+                    $routeMetadata['middleware'] = $middleware;
+                  }
 
-                $controllerMetadata[$name] = $routeMetadata;
+                  $controllerMetadata[$name.$idx] = $routeMetadata;
+              }
             }
         }
 
@@ -211,74 +232,69 @@ class RouteScanner
      */
     protected function hasHttpMethodAnnotation($name, $methodAnnotations)
     {
+
+        $parseAnnotation = function ($httpMethod,$annotation){
+          // options
+          $as         = (! empty($annotation->as))          ? $annotation->as : '';
+          $middleware = (! empty($annotation->middleware))  ? $annotation->middleware : '';
+
+          $uri = (empty($annotation->value)) ? str_replace("_", "-", snake_case($name)) : $annotation->value;
+          return [
+                  'uri' => $uri,
+                  'httpMethod' => $httpMethod,
+                  'as' => $as,
+                  'middleware' => $middleware
+          ];
+
+        };
+
+
+        $return = [];
+
         foreach ($methodAnnotations as $annotation) {
             // check for http method annotation
             if ($annotation instanceof \ProAI\Annotations\Annotations\Get) {
                 $httpMethod = 'GET';
-                break;
+                $return[] = $parseAnnotation($httpMethod,$annotation);
+           //     break;
             }
             if ($annotation instanceof \ProAI\Annotations\Annotations\Post) {
                 $httpMethod = 'POST';
-                break;
+                $return[] = $parseAnnotation($httpMethod,$annotation);
+                //break;
             }
             if ($annotation instanceof \ProAI\Annotations\Annotations\Options) {
                 $httpMethod = 'OPTIONS';
-                break;
+                $return[] = $parseAnnotation($httpMethod,$annotation);
+               // break;
             }
             if ($annotation instanceof \ProAI\Annotations\Annotations\Put) {
                 $httpMethod = 'PUT';
-                break;
+                $return[] = $parseAnnotation($httpMethod,$annotation);
+                //break;
             }
             if ($annotation instanceof \ProAI\Annotations\Annotations\Patch) {
                 $httpMethod = 'PATCH';
-                break;
+                $return[] = $parseAnnotation($httpMethod,$annotation);
+               // break;
             }
             if ($annotation instanceof \ProAI\Annotations\Annotations\Delete) {
                 $httpMethod = 'DELETE';
-                break;
+                $return[] = $parseAnnotation($httpMethod,$annotation);
+                //break;
             }
             if ($annotation instanceof \ProAI\Annotations\Annotations\Any) {
                 $httpMethod = 'ANY';
-                break;
+                $return[] = $parseAnnotation($httpMethod,$annotation);
+                //break;
             }
 
         }
 
-        // http method found
-        if (! empty($httpMethod)) {
-            // options
-            $as = (! empty($annotation->as)) ? $annotation->as : '';
-
-            $uri = (empty($annotation->value)) ? str_replace("_", "-", snake_case($name)) : $annotation->value;
-
-            return [
-                'uri' => $uri,
-                'httpMethod' => $httpMethod,
-                'as' => $as,
-                'middleware' => $this->addMiddleware([], $annotation->middleware)
-            ];
+        if(count($return) > 0){
+          return $return;
+        } else {
+          return false;
         }
-
-        return null;
-    }
-
-    /**
-     * Add middleware
-     *
-     * @param array $middleware
-     * @param array $newMiddleware
-     * @return array
-     */
-    protected function addMiddleware($middleware, $newMiddleware)
-    {
-        if (! empty($newMiddleware)) {
-            $newMiddleware = (is_array($newMiddleware))
-                ? $newMiddleware
-                : [$newMiddleware];
-
-            return array_merge($middleware, $newMiddleware);
-        }
-
-        return $middleware;
     }
 }

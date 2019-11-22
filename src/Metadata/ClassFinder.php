@@ -3,7 +3,7 @@
 namespace ProAI\Annotations\Metadata;
 
 use Illuminate\Console\AppNamespaceDetectorTrait;
-use Illuminate\Filesystem\ClassFinder as FilesystemClassFinder;
+use ProAI\Annotations\Filesystem\ClassFinder as FilesystemClassFinder;
 
 class ClassFinder
 {
