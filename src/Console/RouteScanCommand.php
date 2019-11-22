@@ -88,4 +88,9 @@ class RouteScanCommand extends Command
 
         $this->info('Routes registered successfully!');
     }
+    
+    public function handle()
+    {
+      $this->fire();
+    }
 }
