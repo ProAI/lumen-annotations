@@ -53,4 +53,9 @@ class EventClearCommand extends Command
 
         $this->info('Events cleared successfully!');
     }
+  
+    public function handle()
+    {
+      $this->fire();
+    }
 }

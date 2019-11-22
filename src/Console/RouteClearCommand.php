@@ -53,4 +53,10 @@ class RouteClearCommand extends Command
 
         $this->info('Routes cleared successfully!');
     }
+
+     public function handle()
+    {
+      $this->fire();
+    }
+
 }

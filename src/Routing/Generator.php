@@ -84,8 +84,8 @@ class Generator
     public function generateRoutes($metadata)
     {
         $contents = '<?php' . PHP_EOL;
-        $contents = '$app = app(); ' . PHP_EOL;
-        $contents = '$router = $app->router; ' . PHP_EOL;
+        $contents .= '$app = app(); ' . PHP_EOL;
+        $contents .= '$router = $app->router; ' . PHP_EOL;
 
         $routes = [];
 
@@ -113,7 +113,7 @@ class Generator
                 // uses option
                 $options[] = "'uses' => '".$routeMetadata['controller']."@".$routeMetadata['controllerMethod']."'";
 
-                $contents .= "\$router>".strtolower($routeMetadata['httpMethod'])."('".$routeMetadata['uri']."', [".implode(", ", $options)."]);" . PHP_EOL;
+                $contents .= "\$router"."->".strtolower($routeMetadata['httpMethod'])."('".$routeMetadata['uri']."', [".implode(", ", $options)."]);" . PHP_EOL;
             }
         }
 
