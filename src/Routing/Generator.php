@@ -84,6 +84,8 @@ class Generator
     public function generateRoutes($metadata)
     {
         $contents = '<?php' . PHP_EOL;
+        $contents = '$app = app(); ' . PHP_EOL;
+        $contents = '$router = $app->router; ' . PHP_EOL;
 
         $routes = [];
 
@@ -100,11 +102,10 @@ class Generator
 
                 // middleware option
                 if (! empty($routeMetadata['middleware'])) {
-                    $middleware = implode("', '",$routeMetadata['middleware']);
-                    if (count($routeMetadata['middleware']) > 1) {
-                        $middleware = "['".$middleware."']";
+                    if (is_array($routeMetadata['middleware'])) {
+                        $middleware = "['".implode("', '",$routeMetadata['middleware'])."']";
                     } else {
-                        $middleware = "'".$middleware."'";
+                        $middleware = "'".$routeMetadata['middleware']."'";
                     }
                     $options[] = "'middleware' => ".$middleware;
                 }
@@ -112,7 +113,7 @@ class Generator
                 // uses option
                 $options[] = "'uses' => '".$routeMetadata['controller']."@".$routeMetadata['controllerMethod']."'";
 
-                $contents .= "\$app->".strtolower($routeMetadata['httpMethod'])."('".$routeMetadata['uri']."', [".implode(", ", $options)."]);" . PHP_EOL;
+                $contents .= "\$router>".strtolower($routeMetadata['httpMethod'])."('".$routeMetadata['uri']."', [".implode(", ", $options)."]);" . PHP_EOL;
             }
         }
 
